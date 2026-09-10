@@ -36,8 +36,10 @@ spec:
         kubevirt.io/domain: frontend-1
     spec:
       domain:
-        devices: {}
-        resources: {}
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
 
       networks:
         - name: default
@@ -86,8 +88,10 @@ spec:
         kubevirt.io/domain: frontend-2
     spec:
       domain:
-        devices: {}
-        resources: {}
+        devices:
+          interfaces:
+            - name: default
+              masquerade: {}
 
       networks:
         - name: default
