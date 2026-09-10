@@ -1,0 +1,114 @@
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: frontend-1
+  labels:
+    app: frontend
+spec:
+  runStrategy: Always
+
+  dataVolumeTemplates:
+    - metadata:
+        name: frontend-1-rootdisk
+      spec:
+        sourceRef:
+          kind: DataSource
+          name: rhel9
+          namespace: openshift-virtualization-os-images
+        storage:
+          resources:
+            requests:
+              storage: 30Gi
+
+  instancetype:
+    inferFromVolume: frontend-1-rootdisk
+    inferFromVolumeFailurePolicy: Ignore
+
+  preference:
+    inferFromVolume: frontend-1-rootdisk
+    inferFromVolumeFailurePolicy: Ignore
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+        kubevirt.io/domain: frontend-1
+    spec:
+      domain:
+        devices: {}
+        resources: {}
+
+      networks:
+        - name: default
+          pod: {}
+
+      volumes:
+        - name: frontend-1-rootdisk
+          dataVolume:
+            name: frontend-1-rootdisk
+
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: frontend-2
+  labels:
+    app: frontend
+spec:
+  runStrategy: Always
+
+  dataVolumeTemplates:
+    - metadata:
+        name: frontend-2-rootdisk
+      spec:
+        sourceRef:
+          kind: DataSource
+          name: rhel9
+          namespace: openshift-virtualization-os-images
+        storage:
+          resources:
+            requests:
+              storage: 30Gi
+
+  instancetype:
+    inferFromVolume: frontend-2-rootdisk
+    inferFromVolumeFailurePolicy: Ignore
+
+  preference:
+    inferFromVolume: frontend-2-rootdisk
+    inferFromVolumeFailurePolicy: Ignore
+
+  template:
+    metadata:
+      labels:
+        app: frontend
+        kubevirt.io/domain: frontend-2
+    spec:
+      domain:
+        devices: {}
+        resources: {}
+
+      networks:
+        - name: default
+          pod: {}
+
+      volumes:
+        - name: frontend-2-rootdisk
+          dataVolume:
+            name: frontend-2-rootdisk
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
